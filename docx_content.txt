@@ -1,0 +1,200 @@
+ChronoRx
+Age-Specific Feature Guide
+How ChronoRx speaks differently to every generation
+🎮
+Teenagers
+13–17 years
+💻
+Young Adults
+18–35 years
+🏠
+Adults & Parents
+36–59 years
+🌅
+Senior Citizens
+60+ years
+"ChronoRx doesn't remind you to take medicine. It tells you when your body is ready to receive it."
+🎮  Teenagers
+Age Range: 13–17 years
+Fix Your Sleep. Play Better. Feel Less Burnt Out.
+ChronoRx for Teens — your body clock, explained simply
+Why This Matters for Your Age Group
+You know that feeling when you can't sleep until 2am no matter how hard you try? That's not laziness — that's biology. Teen brains naturally shift to a later sleep phase. ChronoRx understands your body clock and helps you work with it, not against it.
+Circadian disruption during adolescence is linked to lower academic performance, mood instability, increased anxiety, and higher risk of depression. Getting your sleep timing right isn't just about feeling good — it directly affects your grades, your sport performance, and your mental health.
+Your Biggest Circadian Challenges
+Social jetlag: Your school starts at 8am but your body wants to sleep until 10am. ChronoRx calculates your ideal schedule and helps you shift gradually.
+Screen light at night: Blue light from your phone delays melatonin by up to 3 hours. ChronoRx shows you the exact minute to dim your screen.
+Inconsistent weekends: Sleeping in on weekends resets your body clock every Monday. The app detects this pattern and shows you the cost.
+ADHD medication timing: Stimulants taken too late disrupt sleep. ChronoRx shows the optimal window to avoid this.
+ChronoRx Features Built for You
+01
+Chronotype Quiz (90 sec)
+Find out if you're a Wolf (night owl), Bear, or Dolphin. Your entire schedule is built around your type — not your teacher's preference.
+02
+Screen Curfew Calculator
+Enter your wake time → get the exact minute to switch to warm light tonight. Based on your melatonin suppression curve.
+03
+Weekend Recovery Planner
+Shows how much your body clock drifts over the weekend and gives a Monday morning catch-up plan that doesn't wreck your week.
+04
+Mood vs Sleep Tracker
+Log your mood with one tap. After 7 days, see exactly how your sleep timing correlates with how you feel. Your own data, not generic advice.
+05
+Contact Parent / Doctor
+If your sleep pattern shows a serious circadian disorder, the app generates a message for your parents or GP with the data attached.
+MVP for This Group
+Chronotype quiz → Screen curfew time → Weekend drift alert → Mood correlation chart.
+Pitch Line
+"Your school tells you when to wake up. Your body tells you something different. ChronoRx helps you negotiate between the two."
+💻  Young Adults
+Age Range: 18–35 years
+Optimise Your Peak Hours. Stop Wasting Your Best Brain Time.
+ChronoRx for Young Adults — performance, productivity, and medication timed to your biology
+Why This Matters for Your Age Group
+You have 4–6 hours of peak cognitive performance per day. Most people spend them in meetings, commuting, or scrolling. ChronoRx maps your exact peak window and helps you schedule everything — work, workouts, and medication — inside it.
+Young adults are the most circadian-disrupted demographic globally. Shift work, irregular sleep, late-night screens, and high-stress schedules cause chronic social jetlag that accumulates silently. Research links this to metabolic disorders, burnout, and reduced medication efficacy for conditions like anxiety, ADHD, and thyroid disorders.
+Your Biggest Circadian Challenges
+Social jetlag: Working 9–5 when your biology peaks at noon–8pm. The mismatch accumulates like a debt.
+ADHD & anxiety meds: Stimulants and SSRIs have specific circadian windows for optimal absorption. Most prescriptions ignore this entirely.
+Contraceptive pill timing: Effectiveness and side effects vary with circadian phase. ChronoRx gives the evidence-backed optimal window.
+Gym timing: Muscle performance peaks at 4–6pm for most chronotypes. Training at 7am is suboptimal by design.
+ChronoRx Features Built for You
+01
+Peak Cognitive Window Map
+Your Two-Process simulation (Process S + Process C) identifies your 2 daily peak windows for deep work, creativity, and complex decisions.
+02
+Medication Priority Ranker
+AI scores your medications by chronotherapy impact and tells you which one benefits most from timing optimisation — and by how much.
+03
+Two-Process Simulator
+Drag the dose slider on a live chart. Watch plasma concentration curves shift against your melatonin and cortisol cycles in real time.
+04
+Social Jetlag Drift Detector
+Tracks your weekly sleep pattern drift using screen-on/off data. Fires an alert when your weekday/weekend midpoint diverges by more than 2 hours.
+05
+N-of-1 Evidence Loop
+After 7 days of logging medication time + energy/mood, see your personal Pearson correlation. Claude generates an insight from your own data.
+06
+Contact Doctor Trigger
+Auto-fires when a significant timing shift is detected or your ChronoScore drops. Sends a pre-filled WhatsApp or email with your data to your GP.
+MVP for This Group
+Chronotype quiz → Two-Process Simulator → Medication Priority Ranker → N-of-1 Loop → Contact Doctor.
+Pitch Line
+"You optimise your calendar, your diet, your workout. ChronoRx helps you optimise the one thing that controls all of them — your body clock."
+🏠  Adults & Parents
+Age Range: 36–59 years
+You're Managing Multiple Medications. Make Sure Timing Isn't Working Against You.
+ChronoRx for Adults — polypharmacy management, caregiver coordination, and clinical-grade circadian scheduling
+Why This Matters for Your Age Group
+By your 40s, the average person manages 2–4 medications across different conditions, often prescribed by different doctors who never talk to each other. None of those prescriptions factor in when your body is best equipped to absorb them. ChronoRx does.
+This is the highest-stakes age group for circadian medication errors. Blood pressure peaks in the morning, meaning antihypertensives taken at night reduce cardiovascular risk by up to 67% (HYGIA trial). Statins, metformin, and thyroid medications all have CYP450 enzyme dependencies that follow circadian rhythms. Timing them correctly isn't optional — it's clinical.
+Your Biggest Circadian Challenges
+Antihypertensives taken at the wrong time: The HYGIA trial showed a 67% reduction in cardiovascular events simply by shifting dosing from morning to bedtime.
+Statins: CYP3A4 liver enzyme activity peaks at night. Statins taken at bedtime achieve significantly higher efficacy.
+Metformin for Type 2 diabetes: Insulin sensitivity follows a circadian curve. Evening dosing aligns with natural metabolic rhythm.
+Caregiver conflict: Optimal dosing times may not align with caregiver availability. The Caregiver Window Negotiator finds the best feasible slot.
+ChronoRx Features Built for You
+01
+Medication Priority Ranker
+AI scores all your medications by chronotherapy impact (half-life + CYP450 rhythmicity + disease timing) and shows which to optimise first.
+02
+Live Two-Process Simulator
+See your plasma concentration curves overlaid against your personal circadian phase. Drag the dose time and watch efficacy scores change live.
+03
+Caregiver Window Negotiator
+Input caregiver availability. ChronoRx finds the intersection between the biological optimal window and practical caregiver schedule.
+04
+Chrono-Prescription QR Card
+A printable card with your personalised dosing window, biological rationale, and QR code. Hand it to your pharmacist or GP at the next appointment.
+05
+Weekly Circadian Health Report
+PDF graded A–F across sleep, meal timing, light hygiene, medication adherence, and activity window. Designed for your next doctor's visit.
+06
+Smart Contact Doctor Trigger
+Auto-triggers on circadian drift >2hrs or ChronoScore drop >10pts. Sends a pre-filled message with your full clinical data attached.
+MVP for This Group
+Medication Ranker → Two-Process Simulator → QR Prescription Card → Weekly Report → Contact Doctor.
+Pitch Line
+"Your doctors prescribe what to take. ChronoRx tells you when — backed by the same clinical trials your cardiologist reads."
+🌅  Senior Citizens
+Age Range: 60+ years
+Your Medications Work Better at the Right Time. Let's Find That Time.
+ChronoRx for Seniors — simple, safe, and clinically grounded medication timing
+Why This Matters for Your Age Group
+As we age, our circadian rhythms naturally shift earlier and weaken. This affects how every medication you take is absorbed, processed, and cleared. ChronoRx makes sense of it with a simple interface — no wearables, no complex setup — just clear guidance about when to take what.
+Seniors take an average of 5+ medications daily. Circadian rhythm weakening in older adults affects drug metabolism significantly — CYP450 enzyme activity declines, liver clearance slows, and blood pressure rhythms flatten. Studies show that timing corrections alone can reduce adverse drug events by up to 30% in older patients. This is the highest-impact age group for ChronoRx.
+Your Biggest Circadian Challenges
+Polypharmacy complexity: 5+ medications from different specialists, each with different optimal windows. ChronoRx creates a single clear daily schedule.
+Blood pressure variation: Morning BP surge is strongest in older adults. Taking antihypertensives at bedtime is particularly critical for this group (HYGIA evidence).
+Missed doses: The Missed-Dose Rescue AI reasons biologically — not just by clock — about whether to take late or skip, reducing the risk of double-dosing.
+Isolation and safety: The Contact Doctor trigger provides a safety net — automatically alerting a family member or GP when the schedule changes significantly.
+ChronoRx Features Built for You
+01
+Simple Daily Schedule Card
+A clear, large-text view of when to take each medication today, colour-coded by urgency and optimal window. No medical jargon.
+02
+Missed-Dose Rescue AI
+"I forgot my blood pressure tablet this morning — should I take it now?" Claude reasons through the answer biologically, not just by the clock.
+03
+Caregiver / Family Coordinator
+Family members can view and confirm the schedule. The app finds dosing times that work for both the patient and the carer's routine.
+04
+Sunrise Wake Window
+Uses your location to calculate the exact sunrise time and your optimal light exposure window — supporting the natural circadian anchor that weakens with age.
+05
+Weekly Report for GP
+A simple one-page PDF showing adherence, timing accuracy, and ChronoScore trend. Bring it to every appointment — your doctor will notice the difference.
+06
+Emergency Contact Doctor
+One large button. Sends a pre-filled message to your GP or family member with your current medication schedule and any detected changes. Zero technical skill required.
+MVP for This Group
+Daily Schedule Card → Missed-Dose Rescue AI → Sunrise Window → Contact Family / Doctor button.
+Pitch Line
+"Your body has been following the same clock for 60+ years. ChronoRx helps your medications finally follow it too."
+Side-by-Side: How ChronoRx Adapts Across Ages
+Feature
+🎮 Teens
+💻 Young Adults
+🏠 Adults
+🌅 Seniors
+Chronotype Quiz
+Wolf/Bear type for school timing
+Performance peak mapping
+Medication window personalisation
+Simple earlier-phase adjustment
+Two-Process Sim
+Screen curfew visualiser
+Full PK curve drag-and-drop
+Dose timing vs efficacy live view
+Simplified daily window view
+Medication Ranker
+ADHD/anxiety focus
+SSRI, contraceptive, stimulant
+Statins, BP, metformin priority
+5+ drug schedule simplifier
+Contact Trigger
+Alerts parents / school nurse
+Auto-fires on pattern drift
+Sends clinical data to GP
+One-tap family/GP alert
+N-of-1 Loop
+Mood vs sleep correlation
+Energy vs timing chart
+Side effects vs timing insight
+Simplified adherence score
+Report Export
+Parent-ready PDF
+Productivity summary card
+Clinician-ready A–F report
+Large-text GP appointment PDF
+Caregiver Support
+Parent schedule alignment
+Partner schedule negotiator
+Full caregiver window tool
+Family coordination hub
+Sunrise Feature
+School wake adjustment
+Workout / work peak light
+Seasonal schedule correction
+Critical circadian anchor tool
+One platform. Four generations. Every body clock respected.
