@@ -1,5 +1,4 @@
 import { useChronoStore } from '../store/useChronoStore';
-import { SpotlightCard } from './ui/SpotlightCard';
 import { motion } from 'framer-motion';
 import { Gamepad2, Laptop, Home, Sunrise, ArrowRight } from 'lucide-react';
 import type { AgeGroup } from '../types';

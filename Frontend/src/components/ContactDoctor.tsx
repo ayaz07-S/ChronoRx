@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useChronoStore } from '../store/useChronoStore';
 import { SpotlightCard } from './ui/SpotlightCard';
 import { Phone, Send, AlertCircle, Check, MessageSquare } from 'lucide-react';
@@ -42,7 +42,40 @@ export function ContactDoctor() {
 
   const label = labels[ageGroup ?? 'young-adult'];
 
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(label.previewMsg)}`;
+  const [previewMsg, setPreviewMsg] = useState(label.previewMsg);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  // Generate dynamic message from backend
+  const generateMessage = async () => {
+    try {
+      setIsGenerating(true);
+      const res = await fetch('http://localhost:8000/api/contact-doctor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chronotype: chronotype,
+          age_group: ageGroup ?? 'adult',
+          chrono_score: 75,
+          medications: useChronoStore.getState().medications || [],
+          trigger: isTeen ? 'Circadian drift > 2 hours' : 'ChronoScore dropped > 10 points'
+        })
+      });
+      const data = await res.json();
+      if (data.message) {
+        setPreviewMsg(data.message);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  useEffect(() => {
+    generateMessage();
+  }, [chronotype, ageGroup]);
+
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(previewMsg)}`;
 
   const handleSend = () => {
     window.open(whatsappUrl, '_blank');
@@ -86,7 +119,7 @@ export function ContactDoctor() {
             <MessageSquare className="w-2.5 h-2.5" /> Pre-filled WhatsApp message
           </div>
           <p className={`text-slate-700 dark:text-slate-300 leading-relaxed ${isSenior ? 'text-sm' : 'text-xs'}`}>
-            {label.previewMsg}
+            {isGenerating ? 'Drafting personalized message...' : previewMsg}
           </p>
         </div>
 

@@ -10,6 +10,8 @@ interface ChronoStore extends UserState {
   setChronotype: (type: Chronotype) => void;
   setWakeTime: (time: string) => void;
   setSleepTime: (time: string) => void;
+  mealTimings: { breakfast: string; lunch: string; dinner: string };
+  setMealTimings: (mealTimings: { breakfast: string; lunch: string; dinner: string }) => void;
   addMedication: (med: Medication) => void;
   removeMedication: (id: string) => void;
   setMedsReady: () => void;
@@ -31,6 +33,7 @@ export const useChronoStore = create<ChronoStore>((set) => ({
   medsReady: false,
   wakeTime: '07:00',
   sleepTime: '23:00',
+  mealTimings: { breakfast: '08:00', lunch: '13:00', dinner: '19:00' },
   medications: [],
   lastDoses: {},
   geoLocation: null,
@@ -44,6 +47,7 @@ export const useChronoStore = create<ChronoStore>((set) => ({
   setChronotype: (type) => set({ chronotype: type }),
   setWakeTime: (time) => set({ wakeTime: time }),
   setSleepTime: (time) => set({ sleepTime: time }),
+  setMealTimings: (timings) => set({ mealTimings: timings }),
   addMedication: (med) => set((state) => ({ medications: [...state.medications, med] })),
   removeMedication: (id) => set((state) => ({ medications: state.medications.filter((m) => m.id !== id) })),
   setMedsReady: () => set({ medsReady: true }),

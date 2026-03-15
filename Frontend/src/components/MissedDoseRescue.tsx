@@ -11,10 +11,41 @@ export function MissedDoseRescue() {
   const [query, setQuery] = useState('');
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [missedDoseAdvice, setMissedDoseAdvice] = useState<string | null>(null);
 
   if (!chronotype) return null;
 
   const content = AGE_CONTENT[ageGroup ?? 'young-adult'];
+
+  const fetchMissedDoseAdvice = async (medId: string) => {
+    const medName = medications.find(m => m.id === medId)?.name || 'Medication';
+    try {
+      const res = await fetch('http://localhost:8000/api/missed-dose', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          medication: medName,
+          chronotype: chronotype,
+          age_group: ageGroup ?? 'adult',
+          hours_late: 4
+        })
+      });
+      const data = await res.json();
+      setMissedDoseAdvice(data.response);
+    } catch (e) {
+      console.error(e);
+      setMissedDoseAdvice("Taking it late is usually better than skipping it entirely. But if it's close to your next dose, skip this one. Don't double up.");
+    }
+  };
+
+  const handleMedChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value;
+    setSelectedMed(val);
+    if (val) {
+      setMissedDoseAdvice(null);
+      fetchMissedDoseAdvice(val);
+    }
+  };
 
   const handleAskAI = async () => {
     if (!query.trim()) return;
@@ -28,7 +59,12 @@ export function MissedDoseRescue() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: query }),
+        body: JSON.stringify({ 
+          question: query,
+          chronotype: chronotype,
+          age_group: ageGroup ?? 'adult',
+          medications: medications
+        }),
       });
       
       const data = await res.json();
@@ -65,7 +101,7 @@ export function MissedDoseRescue() {
           <select
             className="w-full rounded-xl px-4 py-2.5 text-slate-900 dark:text-white text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-rose-500/30 focus:border-rose-400 mb-3 transition-all"
             value={selectedMed}
-            onChange={(e) => setSelectedMed(e.target.value)}
+            onChange={handleMedChange}
           >
             <option value="">Select medication…</option>
             {medications.map(m => (
@@ -101,10 +137,7 @@ export function MissedDoseRescue() {
                   <RotateCcw className="w-3 h-3" /> Biological Impact
                 </h4>
                 <p className={`text-slate-700 dark:text-slate-300 leading-relaxed ${ageGroup === 'senior' ? 'text-sm' : 'text-xs'}`}>
-                  {ageGroup === 'senior'
-                    ? "Taking it late is usually better than skipping it entirely. But if it's close to your next dose, skip this one. Don't double up."
-                    : `Phase II liver enzymes are down-regulated after > 4h delay. Absorption drops ~32%. Delay tomorrow's dose by 2h to avoid PK stacking.`
-                  }
+                  {missedDoseAdvice ? missedDoseAdvice : 'Loading AI biological assessment...'}
                 </p>
               </div>
             </motion.div>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Home as HomeIcon, LayoutDashboard, Heart } from 'lucide-react';
 import { FingerprintCard } from './FingerprintCard';
-import { PrescriptionCard } from './PrescriptionCard';
+import { BookAppointment } from './BookAppointment';
 import { MissedDoseRescue } from './MissedDoseRescue';
 import { Simulator } from './Simulator';
 import { MedicationRanker } from './MedicationRanker';
@@ -92,7 +92,7 @@ export function PatientApp() {
               >
                 <div className="space-y-6">
                   <FingerprintCard />
-                  <PrescriptionCard />
+                  <BookAppointment />
                 </div>
                 <div className="space-y-6">
                   <MissedDoseRescue />

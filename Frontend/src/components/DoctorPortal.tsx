@@ -1,6 +1,7 @@
 import { useState, useRef, useMemo } from 'react';
 import { useChronoStore } from '../store/useChronoStore';
 import { SpotlightCard } from './ui/SpotlightCard';
+import { EnzymeTimeline } from './EnzymeTimeline';
 import { generateCircadianRecommendation, requestGeolocation, calculateSunriseSunset } from '../lib/api';
 import {
   Upload, Plus, X, Check, Edit3, MapPin, Sunrise, Sunset,
@@ -11,13 +12,14 @@ import type { Medication, PatientPrescription, GeoLocation } from '../types';
 
 export function DoctorPortal() {
   const {
-    chronotype, ageGroup, prescriptions, addPrescription,
+    chronotype, prescriptions, addPrescription,
     removePrescription, approvePrescription, geoLocation, setGeoLocation, resetPortal
   } = useChronoStore();
 
   const [name, setName] = useState('');
   const [dose, setDose] = useState('');
   const [frequency, setFrequency] = useState('Once daily');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [category, setCategory] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [patientGeo, setPatientGeo] = useState<GeoLocation | null>(geoLocation);
@@ -68,40 +70,58 @@ export function DoctorPortal() {
     setShowForm(false);
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    // Simulate OCR extraction
-    const demoMeds = [
-      { name: 'Atorvastatin', dose: '20mg', cat: 'Statin' },
-      { name: 'Ramipril', dose: '5mg', cat: 'Antihypertensive' },
-      { name: 'Metformin', dose: '500mg', cat: 'Diabetes' },
-    ];
-    const sunrise = sunData?.sunrise ?? '06:22';
 
-    demoMeds.forEach(m => {
-      const rec = generateCircadianRecommendation(chronotype ?? 'Bear', m.cat, sunrise);
-      const med: Medication = {
-        id: `rx-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`,
-        name: `${m.name} ${m.dose}`,
-        category: m.cat,
-        dose: m.dose,
-        frequency: 'Once daily',
-        timingSensitivity: 'High',
-        optimalTimeWindow: rec.recommendedTime,
-        pkHalfLife: 4,
-        description: `Extracted from prescription`,
-      };
-      addPrescription({
-        id: med.id,
-        medication: med,
-        aiRecommendedTime: rec.recommendedTime,
-        approvedTime: null,
-        approved: false,
-        chronotype: chronotype ?? 'Bear',
-        reason: rec.reason,
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const res = await fetch('http://localhost:8000/api/scan-prescription', {
+        method: 'POST',
+        body: formData,
       });
-    });
+
+      if (!res.ok) {
+        throw new Error('OCR failed');
+      }
+
+      const data = await res.json();
+      const sunrise = sunData?.sunrise ?? '06:22';
+
+      data.medications.forEach((m: any) => {
+        const cat = m.category || (m.name.toLowerCase().includes('statin') ? 'Statin' : (m.name.toLowerCase().includes('pril') || m.name.toLowerCase().includes('pine') ? 'Antihypertensive' : 'General'));
+        const doseStr = (m.dose_mg && m.dose_mg > 0) ? `${m.dose_mg}mg` : (m.dose || 'Unknown');
+        
+        const rec = generateCircadianRecommendation(chronotype ?? 'Bear', cat, sunrise);
+        const med: Medication = {
+          id: `rx-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`,
+          name: `${m.name} ${doseStr}`.trim(),
+          category: cat,
+          dose: doseStr,
+          frequency: m.frequency || 'Once daily',
+          timingSensitivity: 'High',
+          optimalTimeWindow: rec.recommendedTime,
+          pkHalfLife: 4,
+          description: m.duration ? `Duration: ${m.duration}` : `Extracted via AI from prescription`,
+        };
+        addPrescription({
+          id: med.id,
+          medication: med,
+          aiRecommendedTime: rec.recommendedTime,
+          approvedTime: null,
+          approved: false,
+          chronotype: chronotype ?? 'Bear',
+          reason: rec.reason,
+        });
+      });
+    } catch (err) {
+      console.error("Failed to scan prescription", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleGetLocation = async () => {
@@ -141,9 +161,9 @@ export function DoctorPortal() {
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Doctor Portal</h1>
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Patient Record: Rahul</h1>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                Manage prescriptions · Patient chronotype: <span className="font-semibold text-teal-600 dark:text-teal-400">{chronotype ?? 'Not set'}</span>
+                Manage prescriptions · Chronotype: <span className="font-semibold text-teal-600 dark:text-teal-400">{chronotype ?? 'Not set'}</span>
               </p>
             </div>
           </div>
@@ -172,13 +192,16 @@ export function DoctorPortal() {
                 <input ref={fileInputRef} type="file" accept="image/*,.pdf" className="hidden" onChange={handleFileUpload} />
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full flex flex-col items-center gap-3 py-6 border-2 border-dashed border-slate-200 dark:border-slate-600 rounded-xl hover:border-teal-400 dark:hover:border-teal-500 transition-colors group bg-slate-50/50 dark:bg-slate-800/30"
+                  disabled={isSubmitting}
+                  className="w-full flex flex-col items-center gap-3 py-6 border-2 border-dashed border-slate-200 dark:border-slate-600 rounded-xl hover:border-teal-400 dark:hover:border-teal-500 transition-colors group bg-slate-50/50 dark:bg-slate-800/30 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <div className="w-12 h-12 rounded-xl bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center group-hover:bg-teal-100 dark:group-hover:bg-teal-500/20 transition-colors">
                     <Upload className="w-6 h-6 text-teal-600 dark:text-teal-400" />
                   </div>
                   <div className="text-center">
-                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Upload Prescription</p>
+                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                      {isSubmitting ? 'Scanning...' : 'Upload Prescription'}
+                    </p>
                     <p className="text-xs text-slate-400 mt-0.5">Photo or PDF — medications will be extracted automatically</p>
                   </div>
                 </button>
@@ -297,7 +320,10 @@ export function DoctorPortal() {
 
                 <div className="divide-y divide-slate-100 dark:divide-slate-700/30">
                   {prescriptions.map((rx) => (
-                    <div key={rx.id} className="p-5">
+                    <div 
+                      key={rx.id} 
+                      className={`p-5 transition-colors ${rx.id === prescriptions[prescriptions.length - 1]?.id ? 'bg-blue-50/30 dark:bg-blue-500/5' : ''}`}
+                    >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
@@ -434,24 +460,32 @@ export function DoctorPortal() {
               </div>
             </SpotlightCard>
 
-            {/* Chronotype Summary */}
             <SpotlightCard className="p-5" glowColor="99, 102, 241">
               <div className="text-center">
                 <div className="text-3xl mb-2">
-                  {chronotype === 'Lion' ? '🦁' : chronotype === 'Bear' ? '🐻' : chronotype === 'Wolf' ? '🐺' : chronotype === 'Dolphin' ? '🐬' : '❓'}
+                  {(chronotype ?? 'Bear') === 'Lion' ? '🦁' : (chronotype ?? 'Bear') === 'Bear' ? '🐻' : (chronotype ?? 'Bear') === 'Wolf' ? '🐺' : '🐬'}
                 </div>
                 <h4 className="font-bold text-slate-900 dark:text-white text-sm">
-                  Patient is a {chronotype ?? 'Unknown'}
+                  Patient is a {chronotype ?? 'Bear'}
                 </h4>
                 <p className="text-xs text-slate-500 mt-1">
-                  {chronotype === 'Lion' ? 'Early riser — medications shifted earlier' :
-                   chronotype === 'Bear' ? 'Solar tracker — follows standard schedule' :
-                   chronotype === 'Wolf' ? 'Night owl — medications shifted later' :
-                   chronotype === 'Dolphin' ? 'Light sleeper — timing windows are narrower' :
-                   'Complete the quiz to determine chronotype'}
+                  {(chronotype ?? 'Bear') === 'Lion' ? 'Early riser — medications shifted earlier' :
+                   (chronotype ?? 'Bear') === 'Bear' ? 'Solar tracker — follows standard schedule' :
+                   (chronotype ?? 'Bear') === 'Wolf' ? 'Night owl — medications shifted later' :
+                   'Light sleeper — timing windows are narrower'}
                 </p>
               </div>
             </SpotlightCard>
+
+            {/* Visual Enzyme Timeline for Most Recent Rx */}
+            {prescriptions.length > 0 && (
+              <EnzymeTimeline 
+                category={prescriptions[prescriptions.length - 1]?.medication.category ?? 'Other'} 
+                timeString={prescriptions[prescriptions.length - 1]?.approved 
+                  ? prescriptions[prescriptions.length - 1]?.approvedTime 
+                  : prescriptions[prescriptions.length - 1]?.aiRecommendedTime} 
+              />
+            )}
           </div>
         </div>
       </div>

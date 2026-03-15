@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useChronoStore } from '../store/useChronoStore';
 import { SpotlightCard } from './ui/SpotlightCard';
 import { BodyClock } from './BodyClock';

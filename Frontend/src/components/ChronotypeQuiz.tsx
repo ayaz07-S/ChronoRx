@@ -10,15 +10,41 @@ export function ChronotypeQuiz() {
   const { wakeTime, sleepTime, setWakeTime, setSleepTime, setChronotype, ageGroup } = useChronoStore();
   const [isDone, setIsDone] = useState(false);
   const [result, setResult] = useState<string | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
 
   const content = AGE_CONTENT[ageGroup ?? 'young-adult'];
 
-  const handleComplete = () => {
-    const type = calculateChronotype(wakeTime, sleepTime);
+  const handleComplete = async () => {
+    setIsCalculating(true);
+    let type = '';
+    
+    // Create an abort controller with a 2.5s timeout so it doesn't hang forever
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2500);
+
+    try {
+      const res = await fetch('http://localhost:8000/api/chronotype', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sleep_time: sleepTime, wake_time: wakeTime }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      if (!res.ok) throw new Error('API failed');
+      const data = await res.json();
+      type = data.chronotype || calculateChronotype(wakeTime, sleepTime);
+    } catch (e) {
+      clearTimeout(timeoutId);
+      console.warn("Backend unavailable or timed out, using local fallback");
+      type = calculateChronotype(wakeTime, sleepTime);
+    }
+    
     setResult(type);
+    
     setTimeout(() => {
-      setChronotype(type);
+      setChronotype(type as any);
       setIsDone(true);
+      setIsCalculating(false);
     }, 2200);
   };
 
@@ -76,12 +102,13 @@ export function ChronotypeQuiz() {
 
               <button
                 onClick={handleComplete}
-                className="w-full group relative overflow-hidden bg-teal-600 hover:bg-teal-700 text-white font-semibold py-4 rounded-xl shadow-sm transition-all duration-300 active:scale-[0.98]"
+                disabled={isCalculating}
+                className="w-full group relative overflow-hidden bg-teal-600 hover:bg-teal-700 disabled:opacity-75 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-xl shadow-sm transition-all duration-300 active:scale-[0.98]"
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   <Sparkles className="w-4 h-4" />
-                  Find My Chronotype
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  {isCalculating ? 'Calculating...' : 'Find My Chronotype'}
+                  {!isCalculating && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
                 </span>
               </button>
             </>

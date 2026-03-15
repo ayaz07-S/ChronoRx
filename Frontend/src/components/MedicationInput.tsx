@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useChronoStore } from '../store/useChronoStore';
 import { SpotlightCard } from './ui/SpotlightCard';
-import { Plus, X, Upload, Pill, Clock, ArrowRight, FileText, Trash2 } from 'lucide-react';
+import { Plus, X, Pill, Clock, ArrowRight, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Medication } from '../types';
 
@@ -15,15 +15,13 @@ const CATEGORY_SUGGESTIONS: Record<string, string[]> = {
 };
 
 export function MedicationInput() {
-  const { addMedication, removeMedication, medications, setMedsReady, ageGroup } = useChronoStore();
+  const { addMedication, removeMedication, medications, setMedsReady, ageGroup, setMealTimings } = useChronoStore();
 
   const [name, setName] = useState('');
   const [category, setCategory] = useState('');
   const [currentTime, setCurrentTime] = useState('08:00');
   const [sensitivity, setSensitivity] = useState<Medication['timingSensitivity']>('Medium');
   const [showForm, setShowForm] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const categories = CATEGORY_SUGGESTIONS[ageGroup ?? 'young-adult'];
 
@@ -44,42 +42,6 @@ export function MedicationInput() {
     setCurrentTime('08:00');
     setSensitivity('Medium');
     setShowForm(false);
-  };
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setUploadedFile(file.name);
-      const demoMeds: Partial<Medication>[] = ageGroup === 'teen'
-        ? [{ name: 'Methylphenidate (Ritalin)', category: 'ADHD', optimalTimeWindow: '07:30' }]
-        : ageGroup === 'senior'
-        ? [
-            { name: 'Amlodipine 5mg', category: 'Blood Pressure', optimalTimeWindow: '22:00' },
-            { name: 'Atorvastatin 20mg', category: 'Cholesterol', optimalTimeWindow: '21:00' },
-            { name: 'Levothyroxine 50mcg', category: 'Thyroid', optimalTimeWindow: '06:30' },
-          ]
-        : ageGroup === 'adult'
-        ? [
-            { name: 'Atorvastatin 40mg', category: 'Statin', optimalTimeWindow: '22:00' },
-            { name: 'Ramipril 5mg', category: 'Antihypertensive', optimalTimeWindow: '22:00' },
-          ]
-        : [
-            { name: 'Escitalopram 10mg', category: 'SSRI', optimalTimeWindow: '08:00' },
-            { name: 'Levonorgestrel', category: 'Contraceptive', optimalTimeWindow: '22:00' },
-          ];
-
-      demoMeds.forEach(m => {
-        addMedication({
-          id: `med-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-          name: m.name!,
-          category: m.category!,
-          timingSensitivity: 'High',
-          optimalTimeWindow: m.optimalTimeWindow!,
-          pkHalfLife: 4,
-          description: `Extracted from prescription upload`,
-        });
-      });
-    }
   };
 
   const sensitivityStyles: Record<string, string> = {
@@ -109,38 +71,45 @@ export function MedicationInput() {
 
         <div className="p-6 space-y-5">
 
-          {/* Upload section */}
-          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
-            <input ref={fileInputRef} type="file" accept="image/*,.pdf" className="hidden" onChange={handleFileUpload} />
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full flex flex-col items-center gap-3 py-4 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl hover:border-teal-400 dark:hover:border-teal-500 transition-colors group"
-            >
-              <div className="w-12 h-12 rounded-xl bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center group-hover:bg-teal-100 dark:group-hover:bg-teal-500/20 transition-colors">
-                <Upload className="w-6 h-6 text-teal-600 dark:text-teal-400" />
+          {/* Meal Timings section */}
+          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-5 border border-slate-100 dark:border-slate-700/50">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4">Daily Meal Timings</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Breakfast</label>
+                <input
+                  type="time" 
+                  value={useChronoStore.getState().mealTimings?.breakfast || '08:00'}
+                  onChange={(e) => setMealTimings({ ...useChronoStore.getState().mealTimings, breakfast: e.target.value })}
+                  className="w-full rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-400"
+                />
               </div>
-              <div>
-                <p className="text-slate-700 dark:text-slate-200 text-sm font-semibold">Upload Prescription</p>
-                <p className="text-slate-400 text-xs mt-0.5">Photo or PDF of your prescription</p>
+              <div className="space-y-1.5">
+                <label className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Lunch</label>
+                <input
+                  type="time"
+                  value={useChronoStore.getState().mealTimings?.lunch || '13:00'}
+                  onChange={(e) => setMealTimings({ ...useChronoStore.getState().mealTimings, lunch: e.target.value })}
+                  className="w-full rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-400"
+                />
               </div>
-            </button>
-            {uploadedFile && (
-              <motion.div
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-3 flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-2 rounded-lg"
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span className="font-medium">{uploadedFile}</span>
-                <span className="text-slate-500">— medications extracted ✓</span>
-              </motion.div>
-            )}
+              <div className="space-y-1.5">
+                <label className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Dinner</label>
+                <input
+                  type="time"
+                  value={useChronoStore.getState().mealTimings?.dinner || '19:00'}
+                  onChange={(e) => setMealTimings({ ...useChronoStore.getState().mealTimings, dinner: e.target.value })}
+                  className="w-full rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-400"
+                />
+              </div>
+            </div>
+            <p className="text-[10px] text-slate-500 mt-3 text-center">We use meal times to optimize food-sensitive medications.</p>
           </div>
 
           {/* Divider */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 mt-2">
             <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
-            <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">or add manually</span>
+            <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Your Medications</span>
             <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
           </div>
 
