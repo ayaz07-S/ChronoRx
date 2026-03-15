@@ -6,3 +6,11 @@ langchain-huggingface
 langchain-chroma
 python-docx
 sentence-transformers
+fastapi
+uvicorn
+pydantic
+python-multipart
+google-genai
+easyocr
+langextract
+requests
